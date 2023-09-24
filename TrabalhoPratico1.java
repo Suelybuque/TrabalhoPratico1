@@ -1,23 +1,42 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.text.DecimalFormat;
+import java.io.*;
+
 public class TrabalhoPratico1 {
 
 	public static void main(String[] args) throws IOException {
-	BufferedReader br= new BufferedReader(new InputStreamReader(System.in));
-	DecimalFormat mt= new DecimalFormat("###,###,###.00 Mts");
-
+	menu();
+	
 	}
 
 	public static void menu () throws IOException{
-		char opcao, tiposeguro;
-
+		char  tiposeguro, tipoCobertura;
+		int opcao=0, nviaturas, ndependentes, ncolaboradores;
+		float contA=0, contSaude=0, contV=0, vtA=0, vtSaude=0, vtV=0, vtrecebido=0, contT=0, contR, contC=0, contScob=0, vtT=0, vtR=0, vtC=0, vtScob=0;
 		do{
 			opcao=opcoesMenu();
 
+
 			switch(opcao){
-				case 1: tiposeguro= tipodeseguro(); break;
+				case 1: tiposeguro= tipodeseguro(); 
+						System.out.println(tiposeguro);
+						telefone();
+
+						switch (tiposeguro){
+							case 'A': System.out.println("Introduza o tipo de cobertura \n[T] - Contra terceiros e ocupantes \n[R] - Contra todos os riscos");
+										tipoCobertura= validarChar('T', 'R');
+									System.out.println("Introduza o numero de viaturas");
+									nviaturas= validarInt( 1000000 );
+								break;
+							case 'V':System.out.println("Introduza o numero de dependentes");
+									ndependentes=validarInt(10);
+									 break;
+							case 'S':System.out.println("Introduza o tipo de cobertura \n[C] - Com cobertura de evacuacao   \n[S] - Sem cobertura de evacuacao");
+										tipoCobertura= validarChar('C', 'S'); 
+										System.out.println("Introduza o numero de colaboradores");
+										ncolaboradores= validarInt(1000);
+										break;
+						}
+
+						break;
 				case 2: break;
 				case 3: break;
 				case 4: break;
@@ -31,16 +50,16 @@ public class TrabalhoPratico1 {
 	}
 
 
-	public static char opcoesMenu() throws IOException{
+	public static int opcoesMenu() throws IOException{
 		BufferedReader br= new BufferedReader(new InputStreamReader(System.in));
-		char opcao;
+		int opcao;
 
 		do{
 			System.out.println("  Bem vindo/a a Global Aliance Seguros \n***MENU*** \nSelecione uma opcao para prosseguir");
 			System.out.println("1)Introduzir dados e visualizar o valor a pagar \n2) Visualizar a quantidade de assegurados feitos por cada tipo de seguro." +
 			"\n3) Visualizar o valor total obtido por cada tipo de seguro. \n4) Visualizar o tipo de cobertura mais aderido, inclusive o valor total que arrecadou. \n5) Visualizar o tipo de seguro que menos facturou."+ 
 			"\n6) Visualizar o valor total recebido pela Global Aliance Seguros. \n7) Visualizar os dados do programador.\n8) Sair do programa");
-
+			opcao= Integer.parseInt(br.readLine());
 			if (opcao!=1&&  opcao!=2 &&  opcao!=3 && opcao!=4 &&  opcao!=5 && opcao!=6 &&  opcao!=7 &&  opcao!=8  )
 				System.out.println("Opcao invalida! Tente novamente.");
 		}while (opcao!=1&&  opcao!=2 &&  opcao!=3 && opcao!=4 &&  opcao!=5 && opcao!=6 &&  opcao!=7 &&  opcao!=8  );
@@ -62,4 +81,79 @@ public class TrabalhoPratico1 {
 
 		return tp;
 	}
+	
+	public static void visualizacaoTabela (){
+		System.out.println ("====================================================================");
+		 System.out.printf("%-20s %-15s %-15s %-15s %-15s%n", "Telefone |", "Tipo de Seguro |", "No. Viaturas |", "Tipo de Cobertura |", "Valor a pagar (mt) |");
+        System.out.printf("%-15s %-15s %-15s %-15s %-15s%n", "Row 1, Col 1 |", "Row 1, Col 2 |", "Row 1, Col 3 |", "Row 1, Col 4 |", "Row 1, Col 5 |");
+        System.out.printf("%-15s %-15s %-15s %-15s %-15s%n", "Row 2, Col 1 |", "Row 2, Col 2 |", "Row 2, Col 3 |", "Row 2, Col 4 |", "Row 2, Col 5 |");
+  System.out.println ("=========================================================================");
+	}
+
+	public static int telefone() throws IOException{
+		BufferedReader br=new BufferedReader (new InputStreamReader(System.in));
+		int telefone;
+
+		do{
+			System.out.println("Introduza o contacto telefonico (9 digitos)");
+			telefone=Integer.parseInt(br.readLine());
+
+			if(telefone< 820000000 || telefone >880000000)
+				System.out.println("Contacto Invalido! Por favor, tente novamente.");
+			
+		}while(telefone<820000000 || telefone > 880000000);
+
+		return telefone;
+	}
+
+	public static char validarChar( char a, char b) throws IOException{
+		BufferedReader br = new BufferedReader (new InputStreamReader (System.in));
+		char tipoCobertura;
+			do{
+				tipoCobertura=Character.toUpperCase(br.readLine().charAt(0));
+				if(tipoCobertura!=a && tipoCobertura!=b)
+					System.out.println("Tipo invalido! Tente novamente.");
+			}while(tipoCobertura!=a && tipoCobertura!=b);
+
+		return tipoCobertura;
+	}	
+
+	public static void valorpagar (char tipodeseguro, char tipoCobertura, int nviaturas, int ndependendes,int ncolaboradores){
+		float vp, desconto;
+		final float SAUDE=15/100f, SVIDA=1/100f, AUTO_DESCONTO=0/100f, VIDA_DESCONTO=15/100f, DESCONTO_SAUDE=10/100f, IMPOSTO=10/100f; 
+		final int TERCEIROS=4000, RISCOS=10000, VIDA=50000000, C_EVACUACAO=2000000000, S_EVACUACAO=80000000;
+
+		switch (tipodeseguro){
+			case 'A': 
+					switch(tipoCobertura){
+						case 'T': vp=nviaturas*TERCEIROS; break; 
+						case 'R': vp=nviaturas*RISCOS; break;
+					}
+					 break;
+			case 'V': vp=VIDA/ndependendes; break; 
+			case 'S':
+					switch(tipoCobertura){
+						case 'C': vp=C_EVACUACAO/ncolaboradores;  break;
+						case 'S':vp=S_EVACUACAO/ncolaboradores; break;
+					}
+			 break; 
+		}
+		
+	}
+
+	public static int validarInt( int a) throws IOException{
+		BufferedReader br= new BufferedReader (new InputStreamReader(System.in));
+		int val;
+
+		do{
+			val=Integer.parseInt(br.readLine());
+
+			if(val<=0 || val >a)
+				System.out.println("Numero invalido! Tente novamente.");
+		}while(val<=0 || val>a);
+
+		return val;
+	}
+
+
 }
